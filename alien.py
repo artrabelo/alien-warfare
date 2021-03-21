@@ -166,8 +166,6 @@ class Game:
             y = int(coord[1])-1
             x = letters_to_numbers[coord[0].upper()]
             return y, x
-        else:
-            print("What are you aiming at? Try again.")
     
     def slow_type(self, message, speed=0.05):
         for char in message:
@@ -212,20 +210,21 @@ class Game:
             print(f"Turn: {turns} / {max_turns}")
 
             coord = input("Target: ")
-            y, x = self.translate(coord)
-            if enemy.cell_check(y, x):
-                if (y, x) in enemy.ships:
-                    enemy.destroy_ship(y, x)
-                    print("Ship destroyed!")
-                else:
-                    target = enemy.board[y][x]
-                    if target == " ":
-                        enemy.board[y][x] = "o"
-                        print("You missed!")
-                        turns -= 1
+            try:
+                y, x = self.translate(coord)
+                if enemy.cell_check(y, x):
+                    if (y, x) in enemy.ships:
+                        enemy.destroy_ship(y, x)
+                        print("Ship destroyed!")
                     else:
-                        print("You already guessed that spot.")
-            else:
+                        target = enemy.board[y][x]
+                        if target == " ":
+                            enemy.board[y][x] = "o"
+                            print("You missed!")
+                            turns -= 1
+                        else:
+                            print("You already guessed that spot.")
+            except:
                 print("What are you aiming at? Try again.")
             
             sleep(0.8)
