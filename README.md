@@ -17,7 +17,7 @@
 2) `cd alien-warfare` - cd into the project directory
 3) `python3 alien.py` - and have fun!
 
-#### #) Command-line arguments
+#### 3) Command-line arguments
 `alien.py` accepts the following arguments:
 - `-h, --help` - show help message
 - `--no-ascii` - disable ascii art on intro
