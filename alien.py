@@ -71,6 +71,9 @@ class Invader:
             y, x = ship
             self.board[y][x] = f"{Fore.RED}*\033[m" if not args.mini else "*"
     
+    def cell_check(self, y, x):
+        return self.board[y][x]
+    
     def create_ship(self, y, x):
         self.ships.append((y, x))
         if args.hack:
@@ -163,6 +166,8 @@ class Game:
             y = int(coord[1])-1
             x = letters_to_numbers[coord[0].upper()]
             return y, x
+        else:
+            print("What are you aiming at? Try again.")
     
     def slow_type(self, message, speed=0.05):
         for char in message:
@@ -206,9 +211,9 @@ class Game:
             print(f"\n{len(enemy.ships)} enemy ships remaining")
             print(f"Turn: {turns} / {max_turns}")
 
-            try:
-                coord = input("Target: ")
-                y, x = self.translate(coord)
+            coord = input("Target: ")
+            y, x = self.translate(coord)
+            if enemy.cell_check(y, x):
                 if (y, x) in enemy.ships:
                     enemy.destroy_ship(y, x)
                     print("Ship destroyed!")
@@ -220,8 +225,9 @@ class Game:
                         turns -= 1
                     else:
                         print("You already guessed that spot.")
-            except:
+            else:
                 print("What are you aiming at? Try again.")
+            
             sleep(0.8)
         
         else:
@@ -237,4 +243,3 @@ if __name__ == "__main__":
     argparser()
     game = Game()
     game.run()
-    
