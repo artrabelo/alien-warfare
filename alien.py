@@ -2,8 +2,15 @@ import os
 #import logging
 import argparse
 from time import sleep
-from colorama import Fore, init
-from random import choice, randint
+from random import randint
+
+# Colors
+RED = f"\033[;31m"
+GRN = f"\033[;32m"
+BLU = f"\033[;34m"
+GRY = f"\033[;37m"
+BLD = f"\033[1m"
+END = f"\033[m"
 
 letters_to_numbers = {
     "A": 0,
@@ -59,17 +66,17 @@ class Invader:
             self.reveal_ships()
         letters = "ABCDEFGHIJ"
         headers = [letters[i] for i in range(self.size)]
-        print("      " + "     ".join(headers))
+        print(BLD, "     " + "     ".join(headers), END)
         for index, row in enumerate(self.board):
             if index == 0:
                 print("   ." + "-----."*self.size)
-            print(f"{index+1:<2} |  {'  |  '.join(row)}  |")
+            print(f"{BLD}{index+1:<2}{END} |  {'  |  '.join(row)}  |")
             print("   |" + "-----|"*self.size)
     
     def reveal_ships(self):
         for ship in self.ships:
             y, x = ship
-            self.board[y][x] = f"{Fore.RED}*\033[m" if not args.mini else "*"
+            self.board[y][x] = f"{RED}*{END}"
     
     def cell_check(self, y, x):
         return self.board[y][x]
@@ -78,12 +85,12 @@ class Invader:
         self.ships.append((y, x))
         if args.hack:
             self.board[y][x] = "*"
-        #logging.info(f"Ship created at {y, x}")
+        #logging.info(f"Ship created at {y}, {x}")
 
     def destroy_ship(self, y, x):
         self.ships.remove((y, x))
-        self.board[y][x] = "X"
-        #logging.info(f"Ship destroyed at {y, x}")
+        self.board[y][x] = f"{BLU}X{END}"
+        #logging.info(f"Ship destroyed at {y}, {x}")
     
     def random_ships(self, number_of_ships=5):
         """
@@ -97,7 +104,7 @@ class Invader:
                     self.create_ship(y, x)
                     break
                 else:
-                    #logging.warning(f"Ship already created at {y, x} - trying again")
+                    #logging.warning(f"Ship already created at {y}, {x} - trying again")
                     continue
 
 class Game:
@@ -105,6 +112,7 @@ class Game:
     Creates the main engine.
     """
     def run(self):
+        os.system("clear")
         self.intro()
         self.lvl = self.difficulty()
         if not args.no_nerd:
@@ -141,24 +149,17 @@ class Game:
         
     def nerd_stuff(self):
         messages = (
-            f"{Fore.GREEN}[+]\033[m Syncing with Area 51 backdoor...OK",
-            f"{Fore.GREEN}[+]\033[m Spoofing satellite signal...OK",
-            f"{Fore.RED}[-]\033[m Enumerating targets positions...FAILED",
-            f"{Fore.GREEN}[+]\033[m Gathering targets maximum range...OK",
-            f"{Fore.GREEN}[+]\033[m Building virtual grid...OK"
+            f"[{GRN}+\033[m] Syncing with Area 51 backdoor...OK",
+            f"[{GRN}+\033[m] Intercepting satellite signal...OK",
+            f"[{RED}-\033[m] Enumerating targets positions...FAILED",
+            f"[{GRN}+\033[m] Gathering targets maximum range...OK",
+            f"[{GRN}+\033[m] Building virtual grid...OK"
         )
 
         sleep(0.5)
         for item in messages:
             print(item)
             sleep(1.2)
-
-    def clear(self):
-        """Get OS name and run command to clear the screen."""
-        if os.name == "nt":
-            os.system("cls")
-        elif os.name == "posix":
-            os.system("clear")
 
     def translate(self, coord):
         """Translates board input, as 'A2', to cartesian points."""
@@ -185,7 +186,7 @@ class Game:
         self.slow_type("\nThe earthlings will reign over us.", 0.07)
         sleep(0.5)
         self.slow_type("\nMars will be gone... And so should you.\n", 0.07)
-    
+
     def play(self):
 
         # Initial variables
@@ -198,7 +199,7 @@ class Game:
         while turns > 0:
             
             # Update screen
-            self.clear()
+            os.system("clear")
             enemy.print_board()
             
             # If enemy has no ships, he's done
@@ -206,20 +207,19 @@ class Game:
                 self.win()
                 break
             
-            print(f"\n{len(enemy.ships)} enemy ships remaining")
+            print(f"\n{BLU}{len(enemy.ships)}{END} enemy ships remaining")
             print(f"Turn: {turns} / {max_turns}")
 
-            coord = input("Target: ")
+            target = input("Target: ")
             try:
-                y, x = self.translate(coord)
+                y, x = self.translate(target)
                 if enemy.cell_check(y, x):
                     if (y, x) in enemy.ships:
                         enemy.destroy_ship(y, x)
                         print("Ship destroyed!")
                     else:
-                        target = enemy.board[y][x]
-                        if target == " ":
-                            enemy.board[y][x] = "o"
+                        if enemy.board[y][x] == " ":
+                            enemy.board[y][x] = "~"
                             print("You missed!")
                             turns -= 1
                         else:
@@ -230,15 +230,14 @@ class Game:
             sleep(0.8)
         
         else:
-            self.clear()
+            os.system("clear")
             sleep(0.2)
             enemy.print_board(reveal=True)
             sleep(0.8)
             self.gameover()
 
 if __name__ == "__main__":
-    #logging.basicConfig(level=logging.INFO)
-    init(autoreset=True)
     argparser()
+    #logging.basicConfig(level=logging.INFO)
     game = Game()
     game.run()
