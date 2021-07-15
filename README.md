@@ -9,15 +9,12 @@
 
 ## Instructions
 
-#### 1) Dependencies
-- Colorama
-
-#### 2) Clone & play
+#### 1) Clone & play
 1) `git clone https://github.com/artrabelo/alien-warfare.git`
 2) `cd alien-warfare` - cd into the project directory
 3) `python3 alien.py` - and have fun!
 
-#### 3) Command-line arguments
+#### 2) Command-line arguments
 `alien.py` accepts the following arguments:
 - `-h, --help` - show help message
 - `--no-ascii` - disable ascii art on intro
